@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     env:
       # Force legacy peer deps to allow npm install to work with mismatched dependencies
@@ -22,60 +22,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          # Use Node.js 14 which doesn't require the OpenSSL legacy provider flag
-          node-version: '14'
-      
       - name: Delete package-lock.json and node_modules
         run: |
           rm -f package-lock.json
           rm -rf node_modules
       
-      - name: Install jq utility
-        run: sudo apt-get update && sudo apt-get install -y jq
-      
-      - name: Update package.json Babel dependencies
-        run: |
-          # Use jq to update Babel dependencies
-          jq '.dependencies["@babel/core"] = "^7.16.0"' package.json > package.json.tmp && mv package.json.tmp package.json
-          jq '.dependencies["babel-preset-react-app"] = "^10.0.0"' package.json > package.json.tmp && mv package.json.tmp package.json
-      
       - name: Install dependencies
         run: |
           npm install --no-package-lock
-          # Explicitly install correct Babel version
+      
+      - name: Update Babel dependencies
+        run: |
           npm install --no-package-lock @babel/core@^7.16.0 babel-preset-react-app@^10.0.0
       
       - name: Build React app
         run: npm run build
       
-      - name: Verify required secrets
+      - name: Deploy to Nginx directory
         run: |
-          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "Error: SSH_PRIVATE_KEY secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SSH_USER }}" ]; then
-            echo "Error: SSH_USER secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.SSH_HOST }}" ]; then
-            echo "Error: SSH_HOST secret is not set"
-            exit 1
-          fi
-          echo "All required secrets are set"
+          # Copy build files directly to Nginx directory
+          cp -r ./build/* /usr/share/nginx/react/
           
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          echo "StrictHostKeyChecking no" > ~/.ssh/config
-          
-      - name: Deploy with rsync
-        run: |
-          echo "Deploying to ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
-          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT}}" --delete ./build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
-  
+          # Set proper permissions
+          sudo chown -R nginx:nginx /usr/share/nginx/react
+          sudo chmod -R 755 /usr/share/nginx/react
+      
+      - name: Verify deployment
+        run: ls -la /usr/share/nginx/react
