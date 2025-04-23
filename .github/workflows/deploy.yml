@@ -77,11 +77,11 @@ jobs:
       - name: Deploy with rsync
         run: |
           echo "Deploying to ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
-          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" --delete ./build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
+          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT}}" --delete ./build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
       
       - name: Verify deployment and set permissions
         run: |
-          ssh -p ${{ secrets.SSH_PORT || '22' }} "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
+          ssh -p ${{ secrets.SSH_PORT}} "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
             sudo chown -R nginx:nginx /usr/share/nginx/react &&
             sudo chmod -R 755 /usr/share/nginx/react &&
             ls -la /usr/share/nginx/react
