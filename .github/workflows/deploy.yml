@@ -46,6 +46,9 @@ jobs:
       
       - name: Deploy to Nginx directory
         run: |
+          # Create the directory if it doesn't exist
+          sudo mkdir -p /usr/share/nginx/react
+
           # Copy build files directly to Nginx directory
           sudo cp -r ./build/* /usr/share/nginx/react/
           
