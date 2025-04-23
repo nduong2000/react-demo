@@ -51,17 +51,13 @@ jobs:
       - name: Build React app
         run: npm run build
       
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
-      
-      - name: Add known hosts
+      - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-      
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "StrictHostKeyChecking no" > ~/.ssh/config
+          
       - name: Deploy with rsync
         run: |
           rsync -avz -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react
