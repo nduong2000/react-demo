@@ -51,6 +51,22 @@ jobs:
       - name: Build React app
         run: npm run build
       
+      - name: Verify required secrets
+        run: |
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "Error: SSH_PRIVATE_KEY secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_USER }}" ]; then
+            echo "Error: SSH_USER secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SSH_HOST }}" ]; then
+            echo "Error: SSH_HOST secret is not set"
+            exit 1
+          fi
+          echo "All required secrets are set"
+          
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -60,11 +76,12 @@ jobs:
           
       - name: Deploy with rsync
         run: |
-          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react
+          echo "Deploying to ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
+          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" --delete ./build/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react"
       
       - name: Verify deployment and set permissions
         run: |
-          ssh -p ${{ secrets.SSH_PORT || '22' }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          ssh -p ${{ secrets.SSH_PORT || '22' }} "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
             sudo chown -R nginx:nginx /usr/share/nginx/react &&
             sudo chmod -R 755 /usr/share/nginx/react &&
             ls -la /usr/share/nginx/react
