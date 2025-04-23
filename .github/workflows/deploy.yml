@@ -22,6 +22,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
+      - name: Check Node.js version
+        run: node --version
+      
       - name: Delete package-lock.json and node_modules
         run: |
           rm -f package-lock.json
@@ -35,13 +38,16 @@ jobs:
         run: |
           npm install --no-package-lock @babel/core@^7.16.0 babel-preset-react-app@^10.0.0
       
-      - name: Build React app
-        run: npm run build
+      - name: Build React app with legacy OpenSSL
+        run: |
+          # Use the OpenSSL legacy provider flag to fix Node.js crypto issues
+          export NODE_OPTIONS=--openssl-legacy-provider
+          npm run build
       
       - name: Deploy to Nginx directory
         run: |
           # Copy build files directly to Nginx directory
-          cp -r ./build/* /usr/share/nginx/react/
+          sudo cp -r ./build/* /usr/share/nginx/react/
           
           # Set proper permissions
           sudo chown -R nginx:nginx /usr/share/nginx/react
