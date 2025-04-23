@@ -25,21 +25,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          # Use Node.js 14 which doesn't require the OpenSSL legacy provider flag
+          node-version: '14'
       
       - name: Delete package-lock.json and node_modules
         run: |
           rm -f package-lock.json
           rm -rf node_modules
       
+      - name: Install jq utility
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
       - name: Update package.json Babel dependencies
         run: |
           # Use jq to update Babel dependencies
           jq '.dependencies["@babel/core"] = "^7.16.0"' package.json > package.json.tmp && mv package.json.tmp package.json
           jq '.dependencies["babel-preset-react-app"] = "^10.0.0"' package.json > package.json.tmp && mv package.json.tmp package.json
-      
-      - name: Install jq utility
-        run: sudo apt-get update && sudo apt-get install -y jq
       
       - name: Install dependencies
         run: |
@@ -48,8 +49,7 @@ jobs:
           npm install --no-package-lock @babel/core@^7.16.0 babel-preset-react-app@^10.0.0
       
       - name: Build React app
-        # Apply the openssl-legacy-provider flag only to the build command
-        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
+        run: npm run build
       
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
