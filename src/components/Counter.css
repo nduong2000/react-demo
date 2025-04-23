@@ -1,0 +1,276 @@
+.counter-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.counter-container.dark-mode {
+  background: #2a2a2a;
+  color: #f1f1f1;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.counter-container h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #333;
+  text-align: center;
+}
+
+.counter-container.dark-mode h2 {
+  color: #f1f1f1;
+}
+
+.counter-description {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #666;
+  font-size: 14px;
+}
+
+.counter-container.dark-mode .counter-description {
+  color: #aaa;
+}
+
+.counters-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.counter-box {
+  flex: 1;
+  min-width: 300px;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.counter-container.dark-mode .counter-box {
+  background-color: #3a3a3a;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.counter-box h3 {
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.counter-container.dark-mode .counter-box h3 {
+  color: #f1f1f1;
+}
+
+.counter-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #666;
+  font-size: 14px;
+}
+
+.counter-container.dark-mode .counter-info {
+  color: #aaa;
+}
+
+.counter-info code {
+  background-color: #f1f1f1;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #e83e8c;
+}
+
+.counter-container.dark-mode .counter-info code {
+  background-color: #444;
+  color: #ff8cba;
+}
+
+.counter-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.counter-container.dark-mode .counter-display {
+  background-color: #333;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.count {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #4a90e2;
+  transition: all 0.3s ease;
+}
+
+.counter-container.dark-mode .count {
+  color: #6ab0ff;
+}
+
+.counter-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.counter-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 60px;
+}
+
+.counter-button.decrement {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.counter-container.dark-mode .counter-button.decrement {
+  background-color: #4e2226;
+  color: #f8d7da;
+}
+
+.counter-button.reset {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.counter-container.dark-mode .counter-button.reset {
+  background-color: #3e3f41;
+  color: #e2e3e5;
+}
+
+.counter-button.increment {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.counter-container.dark-mode .counter-button.increment {
+  background-color: #1a4b2b;
+  color: #d4edda;
+}
+
+.counter-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.counter-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Step Control */
+.step-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.step-control label {
+  margin-right: 1rem;
+  color: #666;
+}
+
+.counter-container.dark-mode .step-control label {
+  color: #aaa;
+}
+
+.step-control input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.counter-container.dark-mode .step-control input {
+  background-color: #444;
+  border-color: #555;
+  color: #f1f1f1;
+}
+
+.step-control input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.counter-container.dark-mode .step-control input:focus {
+  border-color: #6ab0ff;
+  box-shadow: 0 0 0 3px rgba(106, 176, 255, 0.2);
+}
+
+/* State Explanation */
+.state-explanation {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.counter-container.dark-mode .state-explanation {
+  background-color: #3a3a3a;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.state-explanation h4 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.counter-container.dark-mode .state-explanation h4 {
+  color: #f1f1f1;
+}
+
+.state-explanation ul {
+  padding-left: 1.5rem;
+}
+
+.state-explanation li {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.counter-container.dark-mode .state-explanation li {
+  color: #bbb;
+}
+
+.state-explanation strong {
+  color: #333;
+}
+
+.counter-container.dark-mode .state-explanation strong {
+  color: #f1f1f1;
+}
+
+@media (max-width: 768px) {
+  .counters-wrapper {
+    flex-direction: column;
+  }
+  
+  .counter-box {
+    min-width: 100%;
+  }
+}
