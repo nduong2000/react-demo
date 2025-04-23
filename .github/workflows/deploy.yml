@@ -82,7 +82,7 @@ jobs:
       - name: Verify deployment and set permissions
         run: |
           ssh -p ${{ secrets.SSH_PORT}} "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "
-            sudo chown -R nginx:nginx /usr/share/nginx/react &&
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /usr/share/nginx/react &&
             sudo chmod -R 755 /usr/share/nginx/react &&
             ls -la /usr/share/nginx/react
           "
