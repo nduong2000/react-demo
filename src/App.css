@@ -118,7 +118,7 @@ body.dark-mode .app-footer {
 }
 
 /* Responsive Styles */
-@media (max-width: 769px) {
+@media (max-width: 768px) {
   .app-nav {
     padding: 1rem;
   }
