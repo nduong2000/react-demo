@@ -1,4 +1,4 @@
-name: Deploy React to Rocky Linux
+name: Build and Deploy React to Rocky Linux
 
 on:
   push:
@@ -11,8 +11,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+    
+    env:
+      # Fix Node.js OpenSSL issues with older React scripts
+      NODE_OPTIONS: --openssl-legacy-provider
+      # Force legacy peer deps to allow npm install to work with mismatched dependencies
+      NPM_CONFIG_LEGACY_PEER_DEPS: true
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,11 +30,30 @@ jobs:
           node-version: '16'
           cache: 'npm'
       
+      - name: Delete package-lock.json
+        run: rm -f package-lock.json
+      
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install --no-package-lock
       
       - name: Build React app
         run: npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-files
+          path: build/
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-files
+          path: build
       
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -42,8 +68,12 @@ jobs:
       
       - name: Deploy with rsync
         run: |
-          rsync -avz -e "ssh -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/usr/share/nginx/react
+          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT || '22' }}" --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/usr/share/nginx/react
       
-      - name: Verify deployment
+      - name: Verify deployment and set permissions
         run: |
-          ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "ls -la /usr/share/nginx/react"
+          ssh -p ${{ secrets.SSH_PORT || '22' }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            sudo chown -R nginx:nginx /usr/share/nginx/react &&
+            sudo chmod -R 755 /usr/share/nginx/react &&
+            ls -la /usr/share/nginx/react
+          "
