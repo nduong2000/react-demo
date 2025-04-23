@@ -15,8 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      # Fix Node.js OpenSSL issues with older React scripts
-      NODE_OPTIONS: --openssl-legacy-provider
       # Force legacy peer deps to allow npm install to work with mismatched dependencies
       NPM_CONFIG_LEGACY_PEER_DEPS: true
       
@@ -27,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
       
       - name: Delete package-lock.json
         run: rm -f package-lock.json
@@ -36,7 +34,8 @@ jobs:
         run: npm install --no-package-lock
       
       - name: Build React app
-        run: npm run build
+        # Apply the openssl-legacy-provider flag only to the build command
+        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
       
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
